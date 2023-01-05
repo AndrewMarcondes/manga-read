@@ -1,0 +1,79 @@
+<template>
+
+  <div class="common-layout">
+    <el-container class="container2">
+      <el-aside class="image"><img :src=manga.image contain height="200" width="150"></el-aside>
+      <el-container>
+        <el-header class="header"><h2>{{ manga.title }}</h2></el-header>
+        <el-main class="body"><p>{{ manga.description }}</p></el-main>
+        <el-footer class="footer">
+          <el-button type="success" class="butt" @click="openInNewTab(manga.shopLink)">Shop Link</el-button>
+        </el-footer>
+      </el-container>
+    </el-container>
+  </div>
+
+</template>
+
+<script>
+export default {
+  // eslint-disable-next-line vue/multi-word-component-names
+  name: "Manga",
+  props: {
+    manga: {
+      title: String,
+      description: String,
+      image: String,
+      volume: Number,
+      id: Number,
+      shopLink: String,
+    },
+  },
+  methods: {
+    openInNewTab(url) {
+      window.open(url, '_blank', 'noreferrer');
+    },
+  },
+
+}
+
+console.log("Manga");
+</script>
+
+<style scoped>
+.header {
+  background-color: #79bbff;
+}
+
+.body {
+  background: #ecf5ff;
+}
+
+.footer {
+  background-color: #79bbff;
+}
+
+.image {
+  width: 300px;
+  background: #409EFF;
+}
+
+.container {
+  border-radius: 2px;
+  margin-bottom: 40px;
+}
+
+.container2 {
+  border: 1px solid;
+  margin: 40px;
+}
+
+.innerContainer {
+  display: inline-block;
+}
+
+.butt {
+  margin-top: 15px;
+}
+
+</style>
