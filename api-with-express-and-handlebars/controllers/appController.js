@@ -81,6 +81,8 @@ exports.manga = async (req, res) => {
 exports.mangaInformation = async (req, res) => {
   try {
     res.setHeader('Content-type', 'application/json')
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
     const MANGA_NAME = req.params.mangaName.toLowerCase().replace(/-/g, " ")
 
@@ -95,7 +97,39 @@ exports.mangaInformation = async (req, res) => {
     })
 
     const getMangaInfo = await getJSON(MANGA_DEX_INFO_URL+bestMatch.id)
-    res.json(getMangaInfo)
+
+    let mangaDescription = getMangaInfo.description.en
+    let editedDescription
+
+    let dashCount = 0
+    for (let i = 0; i < mangaDescription.length; i++){
+
+      if(dashCount == 1 && !mangaDescription.charAt(i).match("-")){
+        dashCount = 0
+      }
+
+      if(mangaDescription.charAt(i).match("-")){
+        dashCount++
+      }
+      if(dashCount == 3){
+        editedDescription = mangaDescription.slice(0, i-3)
+        i = mangaDescription.length
+      }
+    }
+
+    if(dashCount == 0)
+      editedDescription = mangaDescription
+
+    const mangaInfo = {
+      id: getMangaInfo.id,
+      title: getMangaInfo.title,
+      description: editedDescription,
+      releaseDate: getMangaInfo.releaseDate,
+      image: getMangaInfo.image,
+    }
+
+    res.json(mangaInfo)
+
   } catch (error) {
     res.json({ error, message: `Unable to fetch data on ${req.route.path}` })
   }
