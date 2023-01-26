@@ -24,7 +24,6 @@ export default {
         "hunter-x-hunter",
         "gangsta",
         "tokyo-ghoul",
-        "yuyu-hakusho",
         "one-piece",
       ]
     }
