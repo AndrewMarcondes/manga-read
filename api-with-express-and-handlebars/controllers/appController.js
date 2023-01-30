@@ -5,148 +5,129 @@ const MANGA_DEX_INFO_URL = 'https://api.consumet.org/manga/mangadex/info/'
 const fs = require('node:fs');
 
 exports.manga = async (req, res) => {
-  try {
-    res.setHeader('Content-type', 'application/json')
-    res.json('hello world')
-  } catch (error) {
-    res.json({ error, message: `Unable to fetch data on ${req.route.path}` })
-  }
+    try {
+        res.setHeader('Content-type', 'application/json')
+        res.json('hello world')
+    } catch (error) {
+        res.json({error, message: `Unable to fetch data on ${req.route.path}`})
+    }
 }
 
 const trimMangaDescription = (description) => {
-  const INDEX_OF_TRIPLE_DASH = description.indexOf("---")
+    const INDEX_OF_TRIPLE_DASH = description.indexOf("---")
 
-  if(INDEX_OF_TRIPLE_DASH > 0)
-    return description.slice(0, INDEX_OF_TRIPLE_DASH)
-  else
-    return description
+    if (INDEX_OF_TRIPLE_DASH > 0)
+        return description.slice(0, INDEX_OF_TRIPLE_DASH)
+    else
+        return description
+}
+
+const getMangaVolumeInfo = async (mangaId, res) => {
+    try {
+        res.setHeader('Content-type', 'application/json')
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+        let url = 'https://api.mangadex.org/cover?manga%5B%5D=db692d58-4b13-4174-ae8c-30c515c0689c&order%5BcreatedAt%5D=asc&order%5BupdatedAt%5D=asc&order%5Bvolume%5D=asc'
+
+        const getVolumesInfo = await getJSON(url)
+
+        return getVolumesInfo.json(getVolumesInfo)
+    } catch (error) {
+        res.json({error, message: `Unable to fetch data on mangaVolumeInfo`})
+    }
 }
 
 exports.mangaInformation = async (req, res) => {
-  try {
-    res.setHeader('Content-type', 'application/json')
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
-    const MANGA_NAME = req.params.mangaName.toLowerCase().replace(/-/g, " ")
-
     try {
-      let rawMangaData = fs.readFileSync('mangadata.json')
-      let mangaData = JSON.parse(rawMangaData)
+        res.setHeader('Content-type', 'application/json')
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-      let isMangaSavedLocally = false
-      let localManga
+        const MANGA_NAME = req.params.mangaName.toLowerCase().replace(/-/g, " ")
 
-      mangaData.forEach(manga => {
-        if(manga.title.toLowerCase() == MANGA_NAME){
-          isMangaSavedLocally = true
-          localManga = manga
+        try {
+            let rawMangaData = fs.readFileSync('mangadata.json')
+            let mangaData = JSON.parse(rawMangaData)
+
+            let isMangaSavedLocally = false
+            let localManga
+
+            mangaData.forEach(manga => {
+                if (manga.title.toLowerCase() == MANGA_NAME) {
+                    isMangaSavedLocally = true
+                    localManga = manga
+                }
+            })
+
+            if (isMangaSavedLocally) {
+                console.log("EASY PEASY")
+                res.json(localManga)
+            } else {
+                const getMangas = await getJSON(MANGA_DEX_URL + MANGA_NAME)
+
+                let bestMatch
+                getMangas.results.forEach(result => {
+                    if (result.title.toLowerCase() == MANGA_NAME) {
+                        bestMatch = result
+                    }
+                })
+
+                const getMangaInfo = await getJSON(MANGA_DEX_INFO_URL + bestMatch.id)
+
+                let mangaDescription = getMangaInfo.description.en
+                let editedDescription = trimMangaDescription(mangaDescription)
+
+
+                const mangaVolumeInfo = await getMangaVolumeInfo(getMangaInfo.id, res)
+
+
+                const mangaInfo = {
+                    id: getMangaInfo.id,
+                    title: getMangaInfo.title,
+                    description: editedDescription,
+                    releaseDate: getMangaInfo.releaseDate,
+                    image: getMangaInfo.image,
+                }
+
+                mangaData.push(mangaInfo)
+
+                let saveMangaRequest = JSON.stringify(mangaData)
+                fs.writeFileSync('mangadata.json', saveMangaRequest)
+
+                res.json(mangaInfo)
+            }
+
+        } catch (error) {
+            ``
+            console.log("Shit broke in json parse: " + error)
         }
-          })
 
-      if(isMangaSavedLocally){
-        console.log("EASY PEASY")
-        res.json(localManga)
-      }else{
-        const getMangas = await getJSON(MANGA_DEX_URL+MANGA_NAME)
 
-        let bestMatch
-        getMangas.results.forEach(result => {
-          if(result.title.toLowerCase() == MANGA_NAME){
-            bestMatch = result
-          }
-        })
-
-        const getMangaInfo = await getJSON(MANGA_DEX_INFO_URL+bestMatch.id)
-
-        let mangaDescription = getMangaInfo.description.en
-        let editedDescription = trimMangaDescription(mangaDescription)
-
-        const mangaInfo = {
-          id: getMangaInfo.id,
-          title: getMangaInfo.title,
-          description: editedDescription,
-          releaseDate: getMangaInfo.releaseDate,
-          image: getMangaInfo.image,
-        }
-
-        mangaData.push(mangaInfo)
-
-        let saveMangaRequest = JSON.stringify(mangaData)
-        fs.writeFileSync('mangadata.json', saveMangaRequest)
-
-        res.json(mangaInfo)
-      }
-
-    } catch (error) {``
-      console.log("Shit broke in json parse: "+error)
+    } catch (error) {
+        res.json({error, message: `Unable to fetch data on ${req.route.path}`})
     }
-
-
-  } catch (error) {
-    res.json({ error, message: `Unable to fetch data on ${req.route.path}` })
-  }
 }
 
+exports.mangaVolumePicture = async (req, res) => {
+    try {
+        res.setHeader('Content-type', 'application/json')
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-// const isGrater = (a, b) => semverGt(a.version, b.version)
-//
-// const getLatestReleases = (releases) =>
-//     releases.reduce((acc, release) => {
-//       const major = `v${semverMajor(release.version)}`
-//       const existing = acc[major]
-//       if (!existing || isGrater(release, existing)) {
-//         acc[major] = release
-//       }
-//       return acc
-//     }, {})
-//
-// exports.dependencies = (req, res) => {
-//   const dependencies = Object.entries(
-//       packageJson.dependencies
-//   ).map(([key, value]) => ({ name: key, version: value }))
-//   res.render('dependencies.hbs', { dependencies })
-// }
-//
-// exports.minimumSecurePage = async (req, res) => {
-//   const releases = await getJSON(NODE_API_URL)
-//   const securedReleases = releases.filter((release) => release.security)
-//   const minimumSecured = getLatestReleases(securedReleases)
-//   res.render('minimum-secure.hbs', {
-//     result: JSON.stringify(minimumSecured, undefined, '  ')
-//   })
-// }
-//
-// exports.latestReleasesPage = async (req, res) => {
-//   const releases = await getJSON(NODE_API_URL)
-//   const latest = getLatestReleases(releases)
-//   res.render('latest-releases.hbs', {
-//     result: JSON.stringify(latest, undefined, '  ')
-//   })
-// }
-//
-// exports.minimumSecure = async (req, res) => {
-//   try {
-//     res.setHeader('Content-type', 'application/json')
-//     const releases = await getJSON(NODE_API_URL)
-//     const securedReleases = releases.filter((release) => release.security)
-//     const minimumSecured = getLatestReleases(securedReleases)
-//     res.json(minimumSecured)
-//   } catch (error) {
-//     res.json({ error, message: `Unable to fetch data on ${req.route.path}` })
-//   }
-// }
-//
-// exports.latestReleases = async (req, res) => {
-//   try {
-//     res.setHeader('Content-type', 'application/json')
-//     const releases = await getJSON(NODE_API_URL)
-//     res.json(getLatestReleases(releases))
-//   } catch (error) {
-//     res.json({ error, message: `Unable to fetch data on ${req.route.path}` })
-//   }
-// }
-//
-// exports.home = (req, res) => {
-//   res.render('home.hbs')
-// }
+        let mangaId = req.params.mangaId
+        let coverImageFileName = req.params.coverId
+
+        // let mangaId = 'db692d58-4b13-4174-ae8c-30c515c0689c'
+        // let coverImageFileName = 'aa112927-f1e5-4fe4-a4db-7fd4a1536e3c.jpg'
+
+
+        res.status(200).json({
+            'imageName': 'some image',
+            'imageUrl': 'https://uploads.mangadex.org/covers/' + mangaId + '/' + coverImageFileName,
+        });
+
+    } catch (error) {
+        res.json({error, message: `Unable to fetch data on ${req.route.path}`})
+    }
+}
