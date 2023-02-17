@@ -39,6 +39,7 @@ export default {
           description: mangaData.description,
           image: mangaData.image,
           volume: 1,
+          volumeData: mangaData.volumeData,
           id: 1,
           shopLink: "",
         }

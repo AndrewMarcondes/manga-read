@@ -4,9 +4,25 @@
     <el-container class="container2">
       <el-aside class="image"><img :src=manga.image contain height="200" width="150"></el-aside>
       <el-container>
-        <el-header class="header"><h2>{{ manga.title }}</h2></el-header>
-        <el-main class="body"><p>{{ manga.description }}</p></el-main>
+        <el-header class="header">
+          <h2>{{ manga.title }} {{manga.volume}}</h2>
+
+        </el-header>
+        <el-main class="body">
+
+          <p>{{ manga.description }}</p>
+        </el-main>
         <el-footer class="footer">
+          <el-dropdown max-height="250px">
+            <el-button type="primary" class="butt">
+              Volume<el-icon class="el-icon--right"></el-icon>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu v-for="volume in manga.volumeData" :key="volume.id">
+                <el-dropdown-item>{{ volume.volumeNumber }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
           <el-button type="success" class="butt" @click="openInNewTab(manga.shopLink)">Shop Link</el-button>
         </el-footer>
       </el-container>
@@ -27,12 +43,22 @@ export default {
       volume: Number,
       id: Number,
       shopLink: String,
+      volumeData: [
+        {
+          id: Number,
+          fileName: String,
+          volumeNumber: String,
+        }
+      ]
     },
   },
   methods: {
     openInNewTab(url) {
       window.open(url, '_blank', 'noreferrer');
     },
+    changeCurrentVolumeNumber() {
+
+    }
   },
 
 }

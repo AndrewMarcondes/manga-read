@@ -24,16 +24,26 @@ const trimMangaDescription = (description) => {
 
 const getMangaVolumeInfo = async (mangaId, res) => {
     try {
-        res.setHeader('Content-type', 'application/json')
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        let url1 = 'https://api.mangadex.org/cover?manga%5B%5D='
+        let url2 = '&order%5BcreatedAt%5D=asc&order%5BupdatedAt%5D=asc&order%5Bvolume%5D=asc&limit=100'
 
-        let url = 'https://api.mangadex.org/cover?manga%5B%5D=db692d58-4b13-4174-ae8c-30c515c0689c&order%5BcreatedAt%5D=asc&order%5BupdatedAt%5D=asc&order%5Bvolume%5D=asc'
+        const getVolumesInfo = await getJSON(url1 +mangaId+ url2)
 
-        const getVolumesInfo = await getJSON(url)
+        let volumeData = []
 
-        return getVolumesInfo.json(getVolumesInfo)
+        getVolumesInfo.data.forEach(volume => {
+            const volumeConverted = {
+                id: volume.id,
+                volumeNumber: volume.attributes.volume,
+                fileName: volume.attributes.fileName,
+            }
+            volumeData.push(volumeConverted)
+        })
+
+        return volumeData
     } catch (error) {
+        console.log("error")
+        console.log(error)
         res.json({error, message: `Unable to fetch data on mangaVolumeInfo`})
     }
 }
@@ -78,9 +88,7 @@ exports.mangaInformation = async (req, res) => {
                 let mangaDescription = getMangaInfo.description.en
                 let editedDescription = trimMangaDescription(mangaDescription)
 
-
                 const mangaVolumeInfo = await getMangaVolumeInfo(getMangaInfo.id, res)
-
 
                 const mangaInfo = {
                     id: getMangaInfo.id,
@@ -88,6 +96,7 @@ exports.mangaInformation = async (req, res) => {
                     description: editedDescription,
                     releaseDate: getMangaInfo.releaseDate,
                     image: getMangaInfo.image,
+                    volumeData: mangaVolumeInfo,
                 }
 
                 mangaData.push(mangaInfo)
@@ -99,7 +108,6 @@ exports.mangaInformation = async (req, res) => {
             }
 
         } catch (error) {
-            ``
             console.log("Shit broke in json parse: " + error)
         }
 
