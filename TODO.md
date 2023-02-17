@@ -4,4 +4,6 @@
 
 -Game plan for volumes
 
+-Add the User Obj
 
+-Separate the Manga Obj so it is not left inside the application layer without clear definition
