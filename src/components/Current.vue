@@ -18,27 +18,55 @@ export default {
 
   data() {
     return {
+      userData : {},
       mangaList: [],
-      mangaTitles: [
-        "berserk",
-        "hunter-x-hunter",
-        "gangsta",
-        "tokyo-ghoul",
-        "one-piece",
-      ]
+      mangaTitles: []
+    }
+  },
+  methods: {
+    async getVolumePicture(manga, mangaData) {
+      let volumePictureId = mangaData.image
+
+      for (const volumeData of mangaData.volumeData) {
+
+        if (volumeData.volumeNumber == manga.volume) {
+          volumePictureId = volumeData.fileName
+        }
+      }
+
+      const res = await axios.get(`http://localhost:3000/manga/volume/` + mangaData.id
+          + '/' + volumePictureId)
+
+      return res.data.imageUrl
     }
   },
   async created() {
-    for (const title of this.mangaTitles) {
+    // const res = await axios.get()
+    let userName = 'AndrewMarcondes'
+
+    const res = await axios.get('http://localhost:3000/user/data/'+userName)
+    this.userData = res.data
+
+    for(const manga of this.userData.mangas){
+      this.mangaTitles.push(manga)
+    }
+
+    for (const manga of this.mangaTitles) {
       try {
-        const res = await axios.get(`http://localhost:3000/manga/info/`+title);
+        let res = await axios.get(`http://localhost:3000/manga/info/`+manga.name);
         const mangaData = res.data;
+
+
+        const volumePictureUrl = await this.getVolumePicture(manga, mangaData)
+
+        console.log("volumePictureId")
+        console.log(volumePictureUrl)
 
         let mangaItem = {
           title: mangaData.title,
           description: mangaData.description,
-          image: mangaData.image,
-          volume: 1,
+          image: volumePictureUrl,
+          volume: manga.volume,
           volumeData: mangaData.volumeData,
           id: 1,
           shopLink: "",

@@ -56,9 +56,6 @@ export default {
     openInNewTab(url) {
       window.open(url, '_blank', 'noreferrer');
     },
-    changeCurrentVolumeNumber() {
-
-    }
   },
 
 }

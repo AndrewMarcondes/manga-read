@@ -48,6 +48,17 @@ const getMangaVolumeInfo = async (mangaId, res) => {
     }
 }
 
+exports.mangaSearch = async  (req, res) => {
+    res.setHeader('Content-type', 'application/json')
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+    const MANGA_NAME = req.params.mangaName.toLowerCase().replace(/-/g, " ")
+    const getMangas = await getJSON(MANGA_DEX_URL + MANGA_NAME)
+
+    res.json(getMangas)
+}
+
 exports.mangaInformation = async (req, res) => {
     try {
         res.setHeader('Content-type', 'application/json')
@@ -126,10 +137,6 @@ exports.mangaVolumePicture = async (req, res) => {
         let mangaId = req.params.mangaId
         let coverImageFileName = req.params.coverId
 
-        // let mangaId = 'db692d58-4b13-4174-ae8c-30c515c0689c'
-        // let coverImageFileName = 'aa112927-f1e5-4fe4-a4db-7fd4a1536e3c.jpg'
-
-
         res.status(200).json({
             'imageName': 'some image',
             'imageUrl': 'https://uploads.mangadex.org/covers/' + mangaId + '/' + coverImageFileName,
@@ -137,5 +144,31 @@ exports.mangaVolumePicture = async (req, res) => {
 
     } catch (error) {
         res.json({error, message: `Unable to fetch data on ${req.route.path}`})
+    }
+}
+
+exports.userData = async (req, res) => {
+    try{
+        res.setHeader('Content-type', 'application/json')
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+        let requestUserName = req.params.userName
+
+        let rawUserData = fs.readFileSync('userdata.json')
+        let userData = JSON.parse(rawUserData)
+
+        let localUser = "No user was found locally"
+
+        userData.forEach(user => {
+            if (user.name == requestUserName) {
+                localUser = user
+            }
+        })
+
+        res.json(localUser)
+
+    } catch (error) {
+        res.json({error, message: 'User was not found'})
     }
 }

@@ -1,0 +1,32 @@
+[
+  {
+    "name": "AndrewMarcondes",
+    "mangas": [
+      {
+        "name": "berserk",
+        "status": "reading",
+        "volume": 41
+      },
+      {
+        "name": "Hunter X Hunter",
+        "status": "reading",
+        "volume": 3
+      },
+      {
+        "name": "gangsta",
+        "status": "reading",
+        "volume": 7
+      },
+      {
+        "name": "tokyo-ghoul",
+        "status": "reading",
+        "volume": 3
+      },
+      {
+        "name": "one-piece",
+        "status": "reading",
+        "volume": 56
+      }
+    ]
+  }
+]
