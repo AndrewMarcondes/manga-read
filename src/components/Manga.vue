@@ -13,16 +13,17 @@
           <p>{{ manga.description }}</p>
         </el-main>
         <el-footer class="footer">
-          <el-dropdown max-height="250px">
-            <el-button type="primary" class="butt">
-              Volume<el-icon class="el-icon--right"></el-icon>
-            </el-button>
-            <template #dropdown>
+          <el-button type="primary" class="butt">
+            Volume<el-icon class="el-icon--right"></el-icon>
+          </el-button>
+<!--          <el-dropdown max-height="250px">
+
+&lt;!&ndash;            <template #dropdown>
               <el-dropdown-menu v-for="volume in manga.volumeData" :key="volume.id">
                 <el-dropdown-item>{{ volume.volumeNumber }}</el-dropdown-item>
               </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+            </template>&ndash;&gt;
+          </el-dropdown>-->
           <el-button type="success" class="butt" @click="openInNewTab(manga.shopLink)">Shop Link</el-button>
         </el-footer>
       </el-container>

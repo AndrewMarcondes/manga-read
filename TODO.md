@@ -7,3 +7,9 @@
 -Add the User Obj
 
 -Separate the Manga Obj so it is not left inside the application layer without clear definition
+
+-API tests
+
+-Manga API heartbeat tests
+
+-Decouple the Public Manga API

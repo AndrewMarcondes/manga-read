@@ -1,6 +1,8 @@
 <template>
   <h1>Current Reads</h1>
 
+  <manga-search-bar />
+
   <div v-for="manga in mangaList" :key="manga.id">
     <manga :manga="manga"/>
   </div>
@@ -9,12 +11,13 @@
 
 <script>
 import axios from "axios"
-
+import MangaSearchBar from "@/components/MangaSearchBar.vue"
 import Manga from "@/components/Manga";
 
 export default {
   name: "Current-Reads",
-  components: {Manga},
+  // eslint-disable-next-line vue/no-unused-components
+  components: {Manga, MangaSearchBar},
 
   data() {
     return {
@@ -46,6 +49,8 @@ export default {
 
     const res = await axios.get('http://localhost:3000/user/data/'+userName)
     this.userData = res.data
+
+    console.log(res.data)
 
     for(const manga of this.userData.mangas){
       this.mangaTitles.push(manga)

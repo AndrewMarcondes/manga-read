@@ -147,6 +147,28 @@ exports.mangaVolumePicture = async (req, res) => {
     }
 }
 
+const findUserJson = (requestUserName) => {
+    let rawUserData = fs.readFileSync('userdata.json')
+    let userDataJson = JSON.parse(rawUserData)
+
+    console.log("hello")
+
+    console.log("userDataJson")
+    console.log(userDataJson)
+
+    console.log("requestUserName")
+    console.log(requestUserName)
+
+    // userDataJson.forEach(user => {
+    //     if (user.name.toString.equals(requestUserName.toString)) {
+    //         console.log("---------TRUE----------")
+    //         return user
+    //     }
+    // })
+
+    return userDataJson
+}
+
 exports.userData = async (req, res) => {
     try{
         res.setHeader('Content-type', 'application/json')
@@ -155,20 +177,140 @@ exports.userData = async (req, res) => {
 
         let requestUserName = req.params.userName
 
-        let rawUserData = fs.readFileSync('userdata.json')
-        let userData = JSON.parse(rawUserData)
-
-        let localUser = "No user was found locally"
-
-        userData.forEach(user => {
-            if (user.name == requestUserName) {
-                localUser = user
-            }
-        })
-
-        res.json(localUser)
+        res.json(findUserJson(requestUserName))
 
     } catch (error) {
-        res.json({error, message: 'User was not found'})
+        res.json({error, message: 'User was not found'+
+                ' '+error.toString()})
+    }
+}
+
+exports.userAddManga = async (req, res) => {
+    try{
+        res.setHeader('Content-type', 'application/json')
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.setHeader('Access-Control-Allow-Methods', '*')
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+        let requestUserName = req.params.userName
+        let mangaName = req.params.mangaName
+        let mangaVolume = req.params.volumeNumber
+
+        let newManga = {
+                "name": mangaName,
+                "status": "reading",
+                "volume": mangaVolume
+            }
+
+        let user = findUserJson(requestUserName)
+
+        user.mangas.push(newManga)
+
+        let saveNewUserData = JSON.stringify(user)
+
+        fs.writeFileSync('userdata.json', saveNewUserData)
+
+        res.json("User Data saved")
+
+    } catch (error) {
+        console.log("error: "+error.toString())
+        res.json({error, message: 'Failed to Add Manga to User Data' +
+                ' '+error.toString()})
+    }
+}
+
+exports.userUpdateMangaVolumeNumber = async (req, res) => {
+    try{
+        res.setHeader('Content-type', 'application/json')
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+        let requestUserName = req.params.userName
+        let newUserMangaSaveData = req.params.manga
+        let user = findUserJson(requestUserName)
+        let mangaList = user.mangas
+
+        for (let i = 0; i < mangaList.length; i++){
+            if(mangaList[i].name === newUserMangaSaveData){
+                let newMangaSave = {
+                    "name": mangaList[i].name,
+                    "status": mangaList[i].status,
+                    "volume": req.params.volumeNumber
+                }
+                user.mangas.splice(i, 1)
+                user.mangas.push(newMangaSave)
+            }
+        }
+
+        let saveNewUserData = JSON.stringify(user)
+        fs.writeFileSync('userdata.json', saveNewUserData)
+
+        res.json("User Data saved")
+
+    } catch (error) {
+        res.json({error, message: 'Failed to Add Manga to User Data'+
+                ' '+error.toString()})
+    }
+}
+
+exports.userUpdateMangaStatus = async (req, res) => {
+    try{
+        res.setHeader('Content-type', 'application/json')
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+        let requestUserName = req.params.userName
+        let newUserMangaSaveData = req.params.manga
+        let user = findUserJson(requestUserName)
+        let mangaList = user.mangas
+
+        for (let i = 0; i < mangaList.length; i++){
+            if(mangaList[i].name === newUserMangaSaveData){
+                let newMangaSave = {
+                    "name": mangaList[i].name,
+                    "status": req.params.status,
+                    "volume": mangaList[i].volume
+                }
+                user.mangas.splice(i, 1)
+                user.mangas.push(newMangaSave)
+            }
+        }
+
+        let saveNewUserData = JSON.stringify(user)
+        fs.writeFileSync('userdata.json', saveNewUserData)
+
+        res.json("User Data saved")
+
+    } catch (error) {
+        res.json({error, message: 'Failed to Add Manga to User Data'+
+                ' '+error.toString()})
+    }
+}
+
+exports.userDeleteManga = async (req, res) => {
+    try{
+        res.setHeader('Content-type', 'application/json')
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+        let requestUserName = req.params.userName
+        let mangaToDelete = req.params.manga
+        let user = findUserJson(requestUserName)
+        let mangaList = user.mangas
+
+        for (let i = 0; i < mangaList.length; i++){
+            if(mangaList[i].name === mangaToDelete){
+                user.mangas.splice(i, 1)
+            }
+        }
+
+        let saveNewUserData = JSON.stringify(user)
+        fs.writeFileSync('userdata.json', saveNewUserData)
+
+        res.json("Delete Successful")
+
+    } catch (error) {
+        res.json({error, message: 'Failed to Remove Manga from User Data'+
+                ' '+error.toString()})
     }
 }
