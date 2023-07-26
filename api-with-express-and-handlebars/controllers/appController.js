@@ -6,7 +6,6 @@ const fs = require('node:fs');
 
 exports.manga = async (req, res) => {
     try {
-        res.setHeader('Content-type', 'application/json')
         res.json('hello world')
     } catch (error) {
         res.json({error, message: `Unable to fetch data on ${req.route.path}`})
@@ -61,10 +60,6 @@ exports.mangaSearch = async  (req, res) => {
 
 exports.mangaInformation = async (req, res) => {
     try {
-        res.setHeader('Content-type', 'application/json')
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
         const MANGA_NAME = req.params.mangaName.toLowerCase().replace(/-/g, " ")
 
         try {
@@ -130,10 +125,6 @@ exports.mangaInformation = async (req, res) => {
 
 exports.mangaVolumePicture = async (req, res) => {
     try {
-        res.setHeader('Content-type', 'application/json')
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
         let mangaId = req.params.mangaId
         let coverImageFileName = req.params.coverId
 
@@ -171,10 +162,6 @@ const findUserJson = (requestUserName) => {
 
 exports.userData = async (req, res) => {
     try{
-        res.setHeader('Content-type', 'application/json')
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
         let requestUserName = req.params.userName
 
         res.json(findUserJson(requestUserName))
@@ -187,11 +174,6 @@ exports.userData = async (req, res) => {
 
 exports.userAddManga = async (req, res) => {
     try{
-        res.setHeader('Content-type', 'application/json')
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.setHeader('Access-Control-Allow-Methods', '*')
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
         let requestUserName = req.params.userName
         let mangaName = req.params.mangaName
         let mangaVolume = req.params.volumeNumber
@@ -221,17 +203,13 @@ exports.userAddManga = async (req, res) => {
 
 exports.userUpdateMangaVolumeNumber = async (req, res) => {
     try{
-        res.setHeader('Content-type', 'application/json')
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
         let requestUserName = req.params.userName
         let newUserMangaSaveData = req.params.manga
         let user = findUserJson(requestUserName)
         let mangaList = user.mangas
 
         for (let i = 0; i < mangaList.length; i++){
-            if(mangaList[i].name === newUserMangaSaveData){
+            if(mangaList[i].name === newUserMangaSaveData.toLowerCase()){
                 let newMangaSave = {
                     "name": mangaList[i].name,
                     "status": mangaList[i].status,
@@ -255,10 +233,6 @@ exports.userUpdateMangaVolumeNumber = async (req, res) => {
 
 exports.userUpdateMangaStatus = async (req, res) => {
     try{
-        res.setHeader('Content-type', 'application/json')
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
         let requestUserName = req.params.userName
         let newUserMangaSaveData = req.params.manga
         let user = findUserJson(requestUserName)
@@ -289,10 +263,6 @@ exports.userUpdateMangaStatus = async (req, res) => {
 
 exports.userDeleteManga = async (req, res) => {
     try{
-        res.setHeader('Content-type', 'application/json')
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
         let requestUserName = req.params.userName
         let mangaToDelete = req.params.manga
         let user = findUserJson(requestUserName)

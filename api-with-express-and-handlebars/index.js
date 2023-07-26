@@ -5,7 +5,14 @@ const path = require('path')
 const app = express()
 const PORT = 3000
 
+let cors = require('cors')
+let corsOptions = {
+  credentials:true,
+}
+
 app.set('view engine', hbs)
+
+app.use(cors(corsOptions))
 app.use('/', routes)
 app.use(express.static(path.join(__dirname, '/public')))
 

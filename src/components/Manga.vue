@@ -13,8 +13,14 @@
           <p>{{ manga.description }}</p>
         </el-main>
         <el-footer class="footer">
-          <el-button type="primary" class="butt">
-            Volume<el-icon class="el-icon--right"></el-icon>
+<!--          <el-button type="primary" class="butt">
+            Volume<el-icon class="el-icon&#45;&#45;right"></el-icon>
+          </el-button>-->
+          <el-button type="primary" class="butt" @click="decrementVolume(manga.title, manga.volume)">
+            Previous<el-icon class="el-icon--right"></el-icon>
+          </el-button>
+          <el-button type="primary" class="butt" @click="incrementVolume(manga.title, manga.volume)">
+            Next<el-icon class="el-icon--right"></el-icon>
           </el-button>
 <!--          <el-dropdown max-height="250px">
 
@@ -33,6 +39,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "Manga",
@@ -56,6 +64,39 @@ export default {
   methods: {
     openInNewTab(url) {
       window.open(url, '_blank', 'noreferrer');
+    },
+    async incrementVolume(title, volumeNumber) {
+      console.log("Yo did this work");
+
+      console.log(this);
+
+      let updatedVolumeNumber = Number(volumeNumber) +1;
+
+      try {
+        // eslint-disable-next-line no-unused-vars
+        let res = await axios.put('http://localhost:3000/user/manga/updateVolumeNumber/AndrewMarcondes/'+title+'/'+updatedVolumeNumber);
+        console.log("Request sent")
+      } catch (e) {
+        console.log(e);
+      }
+
+    },
+
+    async decrementVolume(title, volumeNumber) {
+      console.log("Yo did this work");
+
+      console.log(this);
+
+      let updatedVolumeNumber = Number(volumeNumber) -1;
+
+      try {
+        // eslint-disable-next-line no-unused-vars
+        let res = await axios.put('http://localhost:3000/user/manga/updateVolumeNumber/AndrewMarcondes/'+title+'/'+updatedVolumeNumber);
+        console.log("Request sent")
+      } catch (e) {
+        console.log(e);
+      }
+
     },
   },
 

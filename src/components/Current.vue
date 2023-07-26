@@ -53,7 +53,9 @@ export default {
     console.log(res.data)
 
     for(const manga of this.userData.mangas){
-      this.mangaTitles.push(manga)
+      if (manga.status === "reading"){
+        this.mangaTitles.push(manga)
+      }
     }
 
     for (const manga of this.mangaTitles) {
