@@ -70,7 +70,7 @@ exports.mangaInformation = async (req, res) => {
             let localManga
 
             mangaData.forEach(manga => {
-                if (manga.title.toLowerCase() == MANGA_NAME) {
+                if (manga.title.toLowerCase() === MANGA_NAME) {
                     isMangaSavedLocally = true
                     localManga = manga
                 }
@@ -84,7 +84,7 @@ exports.mangaInformation = async (req, res) => {
 
                 let bestMatch
                 getMangas.results.forEach(result => {
-                    if (result.title.toLowerCase() == MANGA_NAME) {
+                    if (result.title.toLowerCase() === MANGA_NAME) {
                         bestMatch = result
                     }
                 })
