@@ -3,6 +3,7 @@ const getJSON = bent('json')
 const MANGA_DEX_URL = 'https://api.consumet.org/manga/mangadex/'
 const MANGA_DEX_INFO_URL = 'https://api.consumet.org/manga/mangadex/info/'
 const fs = require('node:fs');
+const mangaHelper = require('../helpers/mangaHelpers.js')
 
 exports.manga = async (req, res) => {
     try {
@@ -10,15 +11,6 @@ exports.manga = async (req, res) => {
     } catch (error) {
         res.json({error, message: `Unable to fetch data on ${req.route.path}`})
     }
-}
-
-const trimMangaDescription = (description) => {
-    const INDEX_OF_TRIPLE_DASH = description.indexOf("---")
-
-    if (INDEX_OF_TRIPLE_DASH > 0)
-        return description.slice(0, INDEX_OF_TRIPLE_DASH)
-    else
-        return description
 }
 
 const getMangaVolumeInfo = async (mangaId, res) => {
@@ -92,7 +84,7 @@ exports.mangaInformation = async (req, res) => {
                 const getMangaInfo = await getJSON(MANGA_DEX_INFO_URL + bestMatch.id)
 
                 let mangaDescription = getMangaInfo.description.en
-                let editedDescription = trimMangaDescription(mangaDescription)
+                let editedDescription = mangaHelper.trimMangaDescription(mangaDescription)
 
                 const mangaVolumeInfo = await getMangaVolumeInfo(getMangaInfo.id, res)
 
