@@ -1,9 +1,9 @@
 const bent = require('bent')
 const getJSON = bent('json')
-const MANGA_DEX_URL = 'https://api.consumet.org/manga/mangadex/'
-const MANGA_DEX_INFO_URL = 'https://api.consumet.org/manga/mangadex/info/'
 const fs = require('node:fs');
 const mangaHelper = require('../helpers/mangaHelpers.js')
+const MANGA_DEX_URL = 'https://api.consumet.org/manga/mangadex/'
+const MANGA_DEX_INFO_URL = 'https://api.consumet.org/manga/mangadex/info/'
 
 exports.manga = async (req, res) => {
     try {
