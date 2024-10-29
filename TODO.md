@@ -1,7 +1,3 @@
--Create a frontend resource to add Manga
-
--Update the API request to search for Manga
-
 -Game plan for volumes
 
 -Add the User Obj
@@ -17,4 +13,8 @@
 -Might want to refactor the api service so that the API is just for retrieval and updating
 -And create a separate service to pull from the public manga api service
 
--- Adding new Line for Git
+-Adding new Line for Git
+
+-MangaId needs to get added
+
+-User Data doesn't pull Manga Information

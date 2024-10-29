@@ -26,28 +26,18 @@ export default {
 
       this.searchResults.splice(0)
 
-      const res = await axios.get(`http://localhost:3000/manga/search/` + searchText)
+      const res = await axios.get(process.env.VUE_APP_BASE_URL + `/manga/GetMangaSearch?mangaName=` + searchText)
 
-      for (const result of res.data.results){
+      for (const result of res.data){
         this.searchResults = [...this.searchResults, result]
-        console.log(result)
       }
-
-      console.log(res)
-      console.log(res.currentPage)
-      console.log(this.searchResults)
     },
     async addManga(manga) {
 
       this.searchResults.splice(0)
 
-      console.log(manga.title.toString())
-
       // eslint-disable-next-line no-unused-vars
-      const res = await axios.put(`http://localhost:3000/user/manga/add/AndrewMarcondes/`
-          + manga.title + "/1")
-
-      console.log(res)
+      const res = await axios.put(process.env.VUE_APP_BASE_URL + `/user/AddUserManga?userName=AndrewMarcondes&mangaName=` + manga.title)
     },
   }
 }
