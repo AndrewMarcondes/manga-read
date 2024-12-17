@@ -75,8 +75,8 @@ export default {
 
         let mangaItem = {
           title: manga.name,
-          description:"", 
-          image: "",
+          description:manga.description,
+          image: manga.image,
           volume: manga.volume,
           volumeData: "",
           id: 1,
