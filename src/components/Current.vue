@@ -46,10 +46,8 @@ export default {
   async created() {
     // const res = await axios.get()
     let userName = 'AndrewMarcondes'
-	console.log("process.env")
-	console.log(process.env)
 
-    const res = await axios.get(process.env.VUE_APP_BASE_URL + '/user/GetUser?userName='+userName)
+    const res = await axios.get('http://localhost:3000/user/data/'+userName)
     this.userData = res.data
 
     console.log(res.data)
@@ -61,37 +59,26 @@ export default {
     }
 
     for (const manga of this.mangaTitles) {
-	console.log("hello this is manga title");
-	console.log(manga);
       try {
-        //let res = await axios.get(`http://localhost:3000/manga/info/`+manga.name);
-        //const mangaData = res.data;
+        let res = await axios.get(`http://localhost:3000/manga/info/`+manga.name);
+        const mangaData = res.data;
 
 
-        //const volumePictureUrl = await this.getVolumePicture(manga, mangaData)
+        const volumePictureUrl = await this.getVolumePicture(manga, mangaData)
 
         console.log("volumePictureId")
-       // console.log(volumePictureUrl)
+        console.log(volumePictureUrl)
 
         let mangaItem = {
-          title: manga.name,
-          description:manga.description,
-          image: manga.image,
+          title: mangaData.title,
+          description: mangaData.description,
+          image: volumePictureUrl,
           volume: manga.volume,
-          volumeData: "",
+          volumeData: mangaData.volumeData,
           id: 1,
           shopLink: "",
         }
 
-        //let mangaItem = {
-          //title: mangaData.title,
-          //description: mangaData.description,
-          //image: volumePictureUrl,
-          //volume: manga.volume,
-          //volumeData: mangaData.volumeData,
-         // id: 1,
-         // shopLink: "",
-        //}
         this.mangaList = [...this.mangaList, mangaItem]
         console.log("res");
         console.log(res);
